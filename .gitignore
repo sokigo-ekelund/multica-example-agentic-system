@@ -1,3 +1,7 @@
 .DS_Store
 .multica/project/
 __pycache__/
+
+# Agenternas leveranser är lokala – bara README följer med i repot
+leveranser/*
+!leveranser/README.md
