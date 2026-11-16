@@ -14,7 +14,12 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT_DEFAULT = os.path.join(HERE, "..", "fabriker-med-multica.html")
 
-GRAY = 'fill="rgba(92,107,114,0.10)" stroke="#8A979D"'
+FONT_LINK = ('<link rel="preconnect" href="https://fonts.googleapis.com">'
+             '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
+             '<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700&display=swap" '
+             'rel="stylesheet">')
+
+GRAY ='fill="rgba(92,107,114,0.10)" stroke="#8A979D"'
 WHITE = 'fill="#FFFFFF" stroke="#232323"'
 FOCAL = 'fill="rgba(62,177,200,0.10)" stroke="#3EB1C8" stroke-width="2"'
 
@@ -141,6 +146,11 @@ def main():
 
     head = mall[: mall.index("<body>") + len("<body>")]
     head = re.sub(r"<title>.*?</title>", "<title>Fabriker med Multica</title>", head, flags=re.S)
+    # Gotham är licensierat och får inte spridas med repot. Mallens inbäddade typsnitt
+    # tas bort; ett lokalt installerat Gotham används om det finns, annars Montserrat.
+    head, antal = re.subn(r"@font-face\{font-family:'Gotham';[^}]*\}", "", head)
+    assert antal == 4, f"Väntade 4 Gotham-typsnitt i mallen, hittade {antal}"
+    head = head.replace("</head>", FONT_LINK + "\n</head>", 1)
     logo = re.search(r'<img[^>]*src="(data:[^"]+)"', mall).group(1)
     tail = mall[mall.index('<div class="progress"'):]
 
@@ -166,8 +176,13 @@ def main():
     slides = re.sub(r"\{\{FOOT\}\}", foot, slides)
     assert "{{" not in slides, "Oersatt platshållare kvar"
 
+    doc = head + '\n<div class="deck" id="deck">\n\n' + slides + "\n</div>\n" + tail
+    doc = doc.replace("font-family:'Gotham'", "font-family:'Gotham','Montserrat'")
+    doc = doc.replace('font-family="Gotham,sans-serif"', 'font-family="Gotham,Montserrat,sans-serif"')
+    doc = doc.replace("font-family:Gotham,sans-serif", "font-family:Gotham,Montserrat,sans-serif")
+    assert "base64,T1RUTw" not in doc, "Inbäddat OTF-typsnitt kvar"
     with open(ut, "w", encoding="utf-8") as f:
-        f.write(head + '\n<div class="deck" id="deck">\n\n' + slides + "\n</div>\n" + tail)
+        f.write(doc)
     print(f"Skrev {ut} ({n} bilder)")
 
 
