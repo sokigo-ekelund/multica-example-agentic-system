@@ -82,6 +82,57 @@ def board():
     return "\n  ".join(out)
 
 
+REGELNIVAER = [
+    ("1 · HUMANA", "Du ska inte skada människor."),
+    ("2 · LEGALA", "Du får inte skapa något som profilerar människor."),
+    ("3 · ORGANISATORISKA", "Inga personuppgifter utan godkännande från CISO."),
+    ("4 · ARBETE / TEAM", "ASD-STD100 (~80 %) och god svenska · diagram med skillen från diagramdesign.dev"),
+]
+
+
+def regelbok_i_nivaer(svg: str) -> str:
+    """Byter mallens enkla regelboksruta mot fyra nästlade nivåer.
+
+    Yttersta nivån (humana) är bredast och ligger överst. Varje nivå inåt
+    smalnar av – den ärver nivån ovanför och får inte strida mot den.
+    """
+    start = svg.index("<!-- Regelbok (focal) -->")
+    slut = svg.index("<!-- Uppdrag -->")
+    x0, bredd, inset, h, y0 = 232, 896, 20, 24, 12
+    ut = ['<!-- Regelbok i fyra nivåer -->',
+          '<text x="40" y="34" fill="#232323" font-size="18" font-weight="500" text-anchor="start">Regelbok</text>',
+          '<text x="40" y="55" fill="#5C6B72" font-size="13" text-anchor="start">gäller före, under</text>',
+          '<text x="40" y="72" fill="#5C6B72" font-size="13" text-anchor="start">och efter arbetet</text>',
+          '<rect x="40" y="84" width="88" height="18" rx="3" fill="#FFFFFF" stroke="#C9D2D6" stroke-width="0.8"/>'
+          '<text x="84" y="97" fill="#5C6B72" font-size="11" font-family="Consolas,monospace" letter-spacing="0.03em" text-anchor="middle">guardrails</text>']
+    for i, (niva, regel) in enumerate(REGELNIVAER):
+        x, w, y = x0 + i * inset, bredd - 2 * i * inset, y0 + i * h
+        alfa = (0.05, 0.09, 0.14, 0.20)[i]
+        ut.append(f'<rect x="{x}" y="{y}" width="{w}" height="{h}" fill="#FFFFFF"/>')
+        ut.append(f'<rect x="{x}" y="{y}" width="{w}" height="{h}" fill="rgba(62,177,200,{alfa})" '
+                  f'stroke="#3EB1C8" stroke-width="{1.5 if i == 0 else 0.8}"/>')
+        ut.append(f'<text x="{x + 14}" y="{y + 16}" fill="#1F7488" font-size="11" font-weight="500" '
+                  f'letter-spacing="0.08em" text-anchor="start">{niva}</text>')
+        ut.append(f'<text x="{x0 + 3 * inset + 170}" y="{y + 16.5}" fill="#232323" font-size="13" '
+                  f'text-anchor="start">{html.escape(regel)}</text>')
+    ut.append(f'<text x="{x0 + bredd + 14}" y="{y0 + 16}" fill="#5C6B72" font-size="12" font-style="italic" '
+              f'text-anchor="start">yttre nivå</text>')
+    ut.append(f'<text x="{x0 + bredd + 14}" y="{y0 + 32}" fill="#5C6B72" font-size="12" font-style="italic" '
+              f'text-anchor="start">går före inre</text>')
+    svg = svg[:start] + "\n    ".join(ut) + "\n\n    " + svg[slut:]
+
+    # Regelbokens "droppar" börjar nu under nivåerna, och en ny droppe når även Människa.
+    for x, y2 in (("304", "256"), ("480", "216"), ("840", "256")):
+        gammal = f'<line x1="{x}" y1="96" x2="{x}" y2="{y2}"'
+        assert gammal in svg, gammal
+        svg = svg.replace(gammal, f'<line x1="{x}" y1="{y0 + 4 * h}" x2="{x}" y2="{y2}"')
+    svg = svg.replace(
+        "<!-- main flow -->",
+        f'<line x1="1048" y1="{y0 + 4 * h}" x2="1048" y2="256" stroke="#A9B4B9" stroke-width="1.2" '
+        f'stroke-dasharray="2,4" marker-end="url(#p-soft)"/>\n  <!-- main flow -->', 1)
+    return svg
+
+
 def main():
     if len(sys.argv) < 2:
         sys.exit(__doc__)
@@ -98,6 +149,7 @@ def main():
     svg = sek[sek.index("<svg"): sek.index("</svg>") + len("</svg>")]
     svg = svg.replace("Claude utför stegen", "människa eller agent").replace("memo · tabell", "beslut · produkt")
     svg = svg.replace("connectors, sök", "system, API:er")
+    svg = regelbok_i_nivaer(svg)
 
     slides = open(os.path.join(HERE, "slides.html"), encoding="utf-8").read()
     slides = (slides.replace("{{PROCESS_SVG}}", svg)
