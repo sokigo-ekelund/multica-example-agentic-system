@@ -1,0 +1,13 @@
+{
+  "valuta": "SEK",
+  "max_reservation_kr": 1500,
+  "moms_procent": 25,
+  "bransle_kr_per_liter": {
+    "Bensin 95": 18.49,
+    "Diesel": 19.29,
+    "E85": 14.39
+  },
+  "tillval": {
+    "Spolarvätska 4 l": 89.00
+  }
+}

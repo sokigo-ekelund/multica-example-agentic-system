@@ -27,6 +27,7 @@ vad som tillverkas.
 | [`demo-uppdrag/`](demo-uppdrag/) | Fyra uppdrag som visar olika vägar genom flödet | Trigger & Uppdrag |
 | [`leveranser/`](leveranser/) | Här hamnar färdiga artiklar | Leverans |
 | [`setup/`](setup/) | Setup-skript, klickguide för tavlan och manus för demon | – |
+| [`bensinautomaten/`](bensinautomaten/) | En andra "fabrik": en bensinautomat där varje ärende är en tankning. Visar deterministiska verktyg för pengar och en människa bara vid avvikelser | Hela modellen igen |
 | [`presentation/`](presentation/) | Workshoppresentationen (HTML + PDF). Bläddra med ← → och tryck F för helskärm | – |
 
 ## Kom igång (ca 20 minuter)
@@ -71,6 +72,10 @@ Det är medvetet: att validera in och validera ut är generiska förmågor.
 
 **En mjukvarufabrik** är samma sak: Skribenten blir *Utvecklare*, underlaget blir kodbasen
 och ärendet, och kontrollskriptet blir testsviten. Tavlan ser likadan ut.
+
+**En bensinautomat** är också samma sak. Se [`bensinautomaten/`](bensinautomaten/): varje ärende är en
+tankning. Kortterminalen validerar in, pumpen gör arbetet och kassan validerar ut. Där räknar ett skript
+alla pengar, och en människa kommer bara in vid avvikelser.
 
 ## Säkerhet: läs detta innan du kör
 

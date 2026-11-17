@@ -1,0 +1,10 @@
+{
+  "_kommentar": "Fiktiva testkort. Inga riktiga kortnummer får någonsin förekomma i den här mappen.",
+  "kort": {
+    "TEST-4242": {"status": "giltigt", "giltigt_till": "2029-12", "disponibelt_kr": 5000},
+    "TEST-7777": {"status": "giltigt", "giltigt_till": "2028-06", "disponibelt_kr": 2500},
+    "TEST-1881": {"status": "giltigt", "giltigt_till": "2027-03", "disponibelt_kr": 300},
+    "TEST-2020": {"status": "giltigt", "giltigt_till": "2024-12", "disponibelt_kr": 4000},
+    "TEST-0666": {"status": "spärrat", "giltigt_till": "2030-01", "disponibelt_kr": 9000}
+  }
+}

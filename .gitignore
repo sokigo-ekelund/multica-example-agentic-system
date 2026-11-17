@@ -5,3 +5,8 @@ __pycache__/
 # Agenternas leveranser är lokala – bara README följer med i repot
 leveranser/*
 !leveranser/README.md
+
+# Bensinautomatens tillstånd och kvitton är lokala
+bensinautomaten/tillstand/
+bensinautomaten/kvitton/*
+!bensinautomaten/kvitton/README.md
